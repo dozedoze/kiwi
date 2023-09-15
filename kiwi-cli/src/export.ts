@@ -2,11 +2,11 @@
  * @author linhuiw
  * @desc 导出未翻译文件
  */
-require('ts-node').register({
-  compilerOptions: {
-    module: 'commonjs'
-  }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs'
+//   }
+// });
 import * as fs from 'fs';
 import { tsvFormatRows } from 'd3-dsv';
 import { getAllMessages, getProjectConfig } from './utils';

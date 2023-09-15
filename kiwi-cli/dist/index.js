@@ -137,7 +137,8 @@ if (commander.mock) {
 if (commander.translate) {
     sync_1.sync(() => __awaiter(this, void 0, void 0, function* () {
         const { pass, origin } = yield utils_1.getTranslateOriginType();
-        if (pass) {
+        // if (pass) {
+        if (true) {
             const spinner = ora(`使用 ${origin} 翻译中...`).start();
             yield translate_1.translate(origin);
             spinner.succeed(`使用 ${origin} 翻译成功`);

@@ -3,26 +3,28 @@
  * @desc 翻译方法
  * @TODO: index 文件需要添加 mock
  */
-require('ts-node').register({
-  compilerOptions: {
-    module: 'commonjs'
-  }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs',
+//   }
+// });
 import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import { traverse, getProjectConfig, getLangDir, translateText } from './utils';
 import { baiduTranslateTexts, googleTranslateTexts } from './translate';
-
+import { requireBatchModule } from './tools';
 const CONFIG = getProjectConfig();
 
 /**
  * 获取中文文案
  */
 function getSourceText() {
+  const fileType = CONFIG.fileType;
   const srcLangDir = getLangDir(CONFIG.srcLang);
-  const srcFile = path.resolve(srcLangDir, 'index.ts');
-  const { default: texts } = require(srcFile);
+  const srcFile = path.resolve(srcLangDir, `index.${fileType}`);
+
+  const texts = requireBatchModule(srcFile ,srcLangDir);
 
   return texts;
 }
@@ -31,11 +33,12 @@ function getSourceText() {
  * @param dstLang
  */
 function getDistText(dstLang) {
+  const fileType = CONFIG.fileType;
   const distLangDir = getLangDir(dstLang);
-  const distFile = path.resolve(distLangDir, 'index.ts');
+  const distFile = path.resolve(distLangDir, `index.${fileType}`);
   let distTexts = {};
   if (fs.existsSync(distFile)) {
-    distTexts = require(distFile).default;
+    distTexts = requireBatchModule(distFile, distLangDir);
   }
 
   return distTexts;
@@ -48,6 +51,7 @@ function getDistText(dstLang) {
 function getAllUntranslatedTexts(toLang) {
   const texts = getSourceText();
   const distTexts = getDistText(toLang);
+
   const untranslatedTexts = {};
   /** 遍历文案 */
   traverse(texts, (text, path) => {
@@ -83,7 +87,7 @@ async function mockCurrentLang(dstLang: string, origin: string) {
 function writeMockFile(dstLang, mocks) {
   const fileContent = 'export default ' + JSON.stringify(mocks, null, 2);
   const filePath = path.resolve(getLangDir(dstLang), 'mock.ts');
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     fs.writeFile(filePath, fileContent, err => {
       if (err) {
         reject(err);

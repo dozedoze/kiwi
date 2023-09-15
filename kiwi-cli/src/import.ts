@@ -10,8 +10,10 @@ require('ts-node').register({
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
+import * as prettier from 'prettier';
 import { tsvParseRows } from 'd3-dsv';
 import { getAllMessages, getProjectConfig, traverse } from './utils';
+import { requireModule } from './tools';
 
 const CONFIG = getProjectConfig();
 
@@ -46,14 +48,21 @@ function getMessagesToImport(file: string) {
 
 function writeMessagesToFile(messages: any, file: string, lang: string) {
   const kiwiDir = CONFIG.kiwiDir;
-  const srcMessages = require(path.resolve(kiwiDir, CONFIG.srcLang, file)).default;
+  const fileType = CONFIG.fileType;
+  const srcMessages = requireModule(path.resolve(kiwiDir, CONFIG.srcLang, `${file}.${fileType}`));
   const dstFile = path.resolve(kiwiDir, lang, file);
-  const oldDstMessages = require(dstFile).default;
+  const oldDstMessages = requireModule(`${dstFile}.${fileType}`);
   const rst = {};
   traverse(srcMessages, (message, key) => {
     _.setWith(rst, key, _.get(messages, key) || _.get(oldDstMessages, key), Object);
   });
-  fs.writeFileSync(dstFile + '.ts', 'export default ' + JSON.stringify(rst, null, 2));
+  console.log(rst);
+  const prettierRst = prettier.format('export default ' + JSON.stringify(rst, null, 2), {
+    parser: 'typescript',
+    trailingComma: 'all',
+    singleQuote: true
+  });
+  fs.writeFileSync(dstFile + `.${CONFIG.fileType}`, prettierRst);
 }
 
 function importMessages(file: string, lang: string) {
@@ -61,6 +70,7 @@ function importMessages(file: string, lang: string) {
   const allMessages = getAllMessages(CONFIG.srcLang);
   messagesToImport = _.pickBy(messagesToImport, (message, key) => allMessages.hasOwnProperty(key));
   const keysByFiles = _.groupBy(Object.keys(messagesToImport), key => key.split('.')[0]);
+
   const messagesByFiles = _.mapValues(keysByFiles, (keys, file) => {
     const rst = {};
     _.forEach(keys, key => {

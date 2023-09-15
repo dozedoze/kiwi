@@ -7,7 +7,10 @@ import * as _ from 'lodash';
 import * as inquirer from 'inquirer';
 import * as fs from 'fs';
 import { pinyin } from 'pinyin-pro';
+import { requireModule } from './tools';
+
 import { PROJECT_CONFIG, KIWI_CONFIG_FILE } from './const';
+
 const colors = require('colors');
 
 function lookForFiles(dir: string, fileName: string): string {
@@ -51,7 +54,6 @@ function getProjectConfig() {
  */
 function getKiwiDir() {
   const config = getProjectConfig();
-
   if (config) {
     return config.kiwiDir;
   }
@@ -88,11 +90,14 @@ function traverse(obj, cb) {
  */
 function getAllMessages(lang: string, filter = (message: string, key: string) => true) {
   const srcLangDir = getLangDir(lang);
+  const fileType = getProjectConfig().fileType;
   let files = fs.readdirSync(srcLangDir);
-  files = files.filter(file => file.endsWith('.ts') && file !== 'index.ts').map(file => path.resolve(srcLangDir, file));
+  files = files
+    .filter(file => file.endsWith(`.${fileType}`) && file !== `index.${fileType}`)
+    .map(file => path.resolve(srcLangDir, file));
 
   const allMessages = files.map(file => {
-    const { default: messages } = require(file);
+    const messages = requireModule(file);
     const fileNameWithoutExt = path.basename(file).split('.')[0];
     const flattenedMessages = {};
 

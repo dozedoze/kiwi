@@ -2,11 +2,11 @@
  * @author zongwenjian
  * @desc 全量翻译 translate命令
  */
-require('ts-node').register({
-  compilerOptions: {
-    module: 'commonjs'
-  }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs',
+//   }
+// });
 import * as path from 'path';
 import * as fs from 'fs';
 import * as baiduTranslate from 'baidu-translate';
@@ -151,7 +151,7 @@ async function runTranslateApi(dstLang: string, origin: string) {
   }
   const content = tsvFormatRows(messagesToTranslate);
   // 输出tsv文件
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const filePath = path.resolve(getLangDir(dstLang), `${dstLang}_translate.tsv`);
     fs.writeFile(filePath, content, err => {
       if (err) {

@@ -130,7 +130,8 @@ if (commander.mock) {
 if (commander.translate) {
   sync(async () => {
     const { pass, origin } = await getTranslateOriginType();
-    if (pass) {
+    // if (pass) {
+    if (true) {
       const spinner = ora(`使用 ${origin} 翻译中...`).start();
       await translate(origin);
       spinner.succeed(`使用 ${origin} 翻译成功`);

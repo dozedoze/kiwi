@@ -9,6 +9,7 @@ import * as babel from '@babel/core';
 import * as babelParser from '@babel/parser';
 import * as babelTraverse from '@babel/traverse';
 import * as babelTypes from '@babel/types';
+import { getProjectConfig } from '../utils';
 /** unicode cjk 中日韩文 范围 */
 const DOUBLE_BYTE_REGEX = /[\u4E00-\u9FFF]/g;
 
@@ -165,14 +166,12 @@ function findTextInTs(code: string, fileName: string) {
  * @Param code
  */
 function findTextInJs(code: string) {
+  const { babelPlugins } = getProjectConfig();
   const matches = [];
-  const ast = babelParser.parse(code, { 
-    sourceType: "module", 
-    plugins: [
-      'jsx',
-      'decorators-legacy'
-    ] 
-  })
+  const ast = babelParser.parse(code, {
+    sourceType: 'module',
+    plugins: babelPlugins as any[]
+  });
 
   babelTraverse.default(ast, {
     StringLiteral({ node }) {

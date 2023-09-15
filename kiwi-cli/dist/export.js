@@ -4,11 +4,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @author linhuiw
  * @desc 导出未翻译文件
  */
-require('ts-node').register({
-    compilerOptions: {
-        module: 'commonjs'
-    }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs'
+//   }
+// });
 const fs = require("fs");
 const d3_dsv_1 = require("d3-dsv");
 const utils_1 = require("./utils");

@@ -17,6 +17,7 @@ const _ = require("lodash");
 const inquirer = require("inquirer");
 const fs = require("fs");
 const pinyin_pro_1 = require("pinyin-pro");
+const tools_1 = require("./tools");
 const const_1 = require("./const");
 const colors = require('colors');
 function lookForFiles(dir, fileName) {
@@ -92,10 +93,13 @@ exports.traverse = traverse;
  */
 function getAllMessages(lang, filter = (message, key) => true) {
     const srcLangDir = getLangDir(lang);
+    const fileType = getProjectConfig().fileType;
     let files = fs.readdirSync(srcLangDir);
-    files = files.filter(file => file.endsWith('.ts') && file !== 'index.ts').map(file => path.resolve(srcLangDir, file));
+    files = files
+        .filter(file => file.endsWith(`.${fileType}`) && file !== `index.${fileType}`)
+        .map(file => path.resolve(srcLangDir, file));
     const allMessages = files.map(file => {
-        const { default: messages } = require(file);
+        const messages = tools_1.requireModule(file);
         const fileNameWithoutExt = path.basename(file).split('.')[0];
         const flattenedMessages = {};
         traverse(messages, (message, path) => {

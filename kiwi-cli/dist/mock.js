@@ -13,24 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @desc 翻译方法
  * @TODO: index 文件需要添加 mock
  */
-require('ts-node').register({
-    compilerOptions: {
-        module: 'commonjs'
-    }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs',
+//   }
+// });
 const path = require("path");
 const fs = require("fs");
 const _ = require("lodash");
 const utils_1 = require("./utils");
 const translate_1 = require("./translate");
+const tools_1 = require("./tools");
 const CONFIG = utils_1.getProjectConfig();
 /**
  * 获取中文文案
  */
 function getSourceText() {
+    const fileType = CONFIG.fileType;
     const srcLangDir = utils_1.getLangDir(CONFIG.srcLang);
-    const srcFile = path.resolve(srcLangDir, 'index.ts');
-    const { default: texts } = require(srcFile);
+    const srcFile = path.resolve(srcLangDir, `index.${fileType}`);
+    const texts = tools_1.requireBatchModule(srcFile, srcLangDir);
     return texts;
 }
 /**
@@ -38,11 +40,12 @@ function getSourceText() {
  * @param dstLang
  */
 function getDistText(dstLang) {
+    const fileType = CONFIG.fileType;
     const distLangDir = utils_1.getLangDir(dstLang);
-    const distFile = path.resolve(distLangDir, 'index.ts');
+    const distFile = path.resolve(distLangDir, `index.${fileType}`);
     let distTexts = {};
     if (fs.existsSync(distFile)) {
-        distTexts = require(distFile).default;
+        distTexts = tools_1.requireBatchModule(distFile, distLangDir);
     }
     return distTexts;
 }

@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @author zongwenjian
  * @desc 全量翻译 translate命令
  */
-require('ts-node').register({
-    compilerOptions: {
-        module: 'commonjs'
-    }
-});
+// require('ts-node').register({
+//   compilerOptions: {
+//     module: 'commonjs',
+//   }
+// });
 const path = require("path");
 const fs = require("fs");
 const baiduTranslate = require("baidu-translate");
