@@ -20,6 +20,7 @@ const unused_1 = require("./unused");
 const mock_1 = require("./mock");
 const extract_1 = require("./extract/extract");
 const translate_1 = require("./translate");
+const exchange_1 = require("./exchange");
 const utils_1 = require("./utils");
 const ora = require("ora");
 /**
@@ -43,6 +44,7 @@ commander
     .option('--init [type]', '初始化项目')
     .option('--import [file] [lang]', '导入翻译文案')
     .option('--export [file] [lang]', '导出未翻译的文案')
+    .option('--exchange', '导入文件')
     .option('--sync', '同步各种语言的文案')
     .option('--mock', '使用 Google 或者 Baidu 翻译 输出mock文件')
     .option('--translate', '使用 Google 或者 Baidu 翻译 翻译结果自动替换目标语种文案')
@@ -137,13 +139,17 @@ if (commander.mock) {
 if (commander.translate) {
     sync_1.sync(() => __awaiter(this, void 0, void 0, function* () {
         const { pass, origin } = yield utils_1.getTranslateOriginType();
-        // if (pass) {
-        if (true) {
-            const spinner = ora(`使用 ${origin} 翻译中...`).start();
-            yield translate_1.translate(origin);
-            spinner.succeed(`使用 ${origin} 翻译成功`);
+        if (pass) {
+            if (true) {
+                const spinner = ora(`使用 ${origin} 翻译中...`).start();
+                yield translate_1.translate(origin);
+                spinner.succeed(`使用 ${origin} 翻译成功`);
+            }
         }
     }));
+}
+if (commander.exchange) {
+    exchange_1.exchange();
 }
 if (commander.extract) {
     console.log(lodash_1.isString(commander.prefix));

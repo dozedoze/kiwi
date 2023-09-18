@@ -70,7 +70,7 @@ function importMessages(file: string, lang: string) {
   const allMessages = getAllMessages(CONFIG.srcLang);
   messagesToImport = _.pickBy(messagesToImport, (message, key) => allMessages.hasOwnProperty(key));
   const keysByFiles = _.groupBy(Object.keys(messagesToImport), key => key.split('.')[0]);
-
+  console.log(keysByFiles, 'kebyfiels')
   const messagesByFiles = _.mapValues(keysByFiles, (keys, file) => {
     const rst = {};
     _.forEach(keys, key => {

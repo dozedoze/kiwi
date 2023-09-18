@@ -28,7 +28,8 @@ exports.PROJECT_CONFIG = {
         defaultTranslateKeyApi: 'Pinyin',
         importI18N: `import I18N from 'src/utils/I18N';`,
         ignoreDir: [],
-        ignoreFile: []
+        ignoreFile: [],
+        babelPlugins: ['jsx', 'decorators-legacy']
     },
     langMap: {
         ['en-US']: 'en',

@@ -27,6 +27,7 @@ function getMessagesToImport(file) {
             value = JSON.parse(`"${value.replace(/"/g, '\\"')}"`);
         }
         catch (e) {
+            console.log(content, 'content');
             throw new Error(`Illegal message: ${value}`);
         }
         return [key, value];
@@ -69,6 +70,7 @@ function importMessages(file, lang) {
     const allMessages = utils_1.getAllMessages(CONFIG.srcLang);
     messagesToImport = _.pickBy(messagesToImport, (message, key) => allMessages.hasOwnProperty(key));
     const keysByFiles = _.groupBy(Object.keys(messagesToImport), key => key.split('.')[0]);
+    console.log(keysByFiles, 'kebyfiels');
     const messagesByFiles = _.mapValues(keysByFiles, (keys, file) => {
         const rst = {};
         _.forEach(keys, key => {
